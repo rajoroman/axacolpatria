@@ -1,4 +1,4 @@
-# axacolpatria
+# Axa Colpatria
 Desarrollo de solución prueba Axa Colpatria Java Senior
 
 Puede clonar el repositorio, importar el proyecto y ejecutarlo en algún IDE
