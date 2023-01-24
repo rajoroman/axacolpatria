@@ -13,6 +13,8 @@ import com.customers.services.CustomerServices;
 import com.customers.services.dto.CustomerDTO;
 import com.customers.services.dto.FilterDTO;
 import com.customers.services.exceptions.ExceptionCustomService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 import jakarta.validation.Valid;
 
@@ -40,8 +42,19 @@ public class MvcController {
 	}
 
 	@GetMapping("/list")
-	public ModelAndView customersList(@ModelAttribute("filter") FilterDTO filter) {
+	public ModelAndView customersList(@ModelAttribute("filter") FilterDTO filter) throws ExceptionCustomService, JsonMappingException, JsonProcessingException {
 		List<CustomerDTO> customerList = customerServices.findAll(filter.getNameFilter());
+		FilterDTO filterDTO = new FilterDTO("");
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.addObject(CUSTOMERSLIST, customerList);
+		modelAndView.addObject(FILTER, filterDTO);
+		modelAndView.setViewName(LIST);
+		return modelAndView;
+	}
+	
+	@GetMapping("/listFromService")
+	public ModelAndView customersListFrom(@ModelAttribute("serviceId") int serviceId) throws ExceptionCustomService, JsonMappingException, JsonProcessingException {
+		List<CustomerDTO> customerList = customerServices.getFromServiceExternal(serviceId);
 		FilterDTO filterDTO = new FilterDTO("");
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.addObject(CUSTOMERSLIST, customerList);

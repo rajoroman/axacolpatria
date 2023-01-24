@@ -12,6 +12,11 @@
         <title>Customers</title>
     </head>
     <body>
+         <c:if test="${hasError == 1}">
+		    <script type="text/javascript">
+		            alert("${messageList}");
+			</script> 
+	     </c:if>
     	<div class="container-fluid">
     	<div class="table-responsive">
 		        <h1>Customers List</h1> 
@@ -21,6 +26,8 @@
 	                <form:button class="btn btn-danger">Filter Name</form:button>
 	                <a class="btn btn-success" href="/list" role="button">Clear Filter</a>
 	                <a class="btn btn-primary" href="/registerForm?hasError=0" role="button">Register Customer</a>
+	                <a class="btn btn-warning" href="/listFromService?serviceId=1" role="button">Get Data Service Axa Colpatria</a>
+	                <a class="btn btn-warning" href="/listFromService?serviceId=2" role="button">Get Data Service Rajoroman</a>
 		        </form:form>
 				        <table class="table table-dark table-hover">
 				            <tr>
@@ -29,7 +36,7 @@
 				                <th style="width: 300px;"><a href="/order?orderParam=name"/> Name</a></th>
 				                <th style="width: 150px;">Phone Number</th>
 				                <th style="width: 300px;">Address</th>
-				                <th style="width: 100px;">Accion</th>
+				                <th style="width: 100px;">Action</th>
 				            </tr>
 				            <c:forEach var="customer" items="${customersList}">
 				                <tr>
@@ -38,7 +45,11 @@
 				                    <td>${customer.name}</td>
 				                    <td>${customer.phoneNumber}</td>
 				                    <td>${customer.address}</td>
-				                    <td><a class="btn btn-danger" href="/delete?id=${customer.id}" role="button">Delete</a></td>
+				                    <td>
+				                    <c:if test="${customer.id > 0}">
+				                    	<a class="btn btn-danger" href="/delete?id=${customer.id}" role="button">Delete</a>
+				                    </c:if>
+				                    </td>
 				                </tr>
 				            </c:forEach>
 				        </table>

@@ -1,5 +1,6 @@
 package com.customers.services.exceptions;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -7,6 +8,7 @@ import org.hibernate.TransactionException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -31,6 +33,10 @@ public class ErrorHandler {
 
 	private static final String CONNECTION_CLOSE = "Error establishing a database connection";
 	
+	private static final String ERROR_FORMAT_JSON = "Error while extracting response from JSON";
+	
+	private static final String SERVICE_NOT_FOUND = "Service not found";
+	
 	@ExceptionHandler(RuntimeException.class)
 	public ResponseEntity<ResponseDTO> runtimeException(HttpServletRequest request, RuntimeException e) {
 
@@ -44,8 +50,10 @@ public class ErrorHandler {
 		} else if (e.getCause() instanceof TransactionException) {
 			httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
 			error_message = CONNECTION_CLOSE;
-			
-		} 
+		}else if (e.getCause() instanceof HttpMessageNotReadableException) {
+			httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+			error_message = ERROR_FORMAT_JSON; 
+		}
 		
 		ResponseDTO response = ResponseDTO.builder()
 				.hasError(true)
@@ -131,5 +139,28 @@ public class ErrorHandler {
 		log.info(e.toString());
 		return new ResponseEntity<>(errorInfo, httpStatus);
 	}
+	
+	@ExceptionHandler(ExceptionRequestClientService.class)
+    public ModelAndView handleErrorsRequestClient(ExceptionRequestClientService ex) {
+		List<CustomerDTO> customerList = new ArrayList<>();
+		
+		String error_message = "";
+		
+		if (ex.getCode() == 404) {
+			error_message = SERVICE_NOT_FOUND;
+		}else if (ex.getCause() instanceof HttpMessageNotReadableException) {
+			error_message = ERROR_FORMAT_JSON;
+		} 
+		 
+        
+		FilterDTO filterDTO = new FilterDTO("");
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.addObject("customersList", customerList);
+		modelAndView.addObject("filter", filterDTO);
+		modelAndView.addObject("hasError",1);
+	    modelAndView.addObject("messageList", error_message);
+		modelAndView.setViewName("list");
+		return modelAndView;
+    }
 	
 }

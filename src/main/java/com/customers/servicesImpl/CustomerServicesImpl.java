@@ -13,11 +13,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.customers.models.entity.Customer;
 import com.customers.models.repository.CustomerRepository;
+import com.customers.services.CustomerClientRequestService;
 import com.customers.services.CustomerServiceMapper;
 import com.customers.services.CustomerServices;
 import com.customers.services.dto.CustomerDTO;
 import com.customers.services.exceptions.ExceptionCustomService;
 import com.customers.services.exceptions.RunTimeExceptionCustomService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import io.micrometer.common.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -28,11 +30,14 @@ public class CustomerServicesImpl implements CustomerServices {
 	
 	private CustomerRepository customerRepository;
 	private CustomerServiceMapper customerMapper;
+	private CustomerClientRequestService customerClientRequestService;
 	
 	public CustomerServicesImpl(CustomerRepository customerRepository,
-								CustomerServiceMapper customerMapper){
+								CustomerServiceMapper customerMapper,
+								CustomerClientRequestService customerClientRequestService){
 		this.customerRepository = customerRepository;
 		this.customerMapper = customerMapper;
+		this.customerClientRequestService = customerClientRequestService;
 	}
 
 	@Transactional
@@ -51,7 +56,7 @@ public class CustomerServicesImpl implements CustomerServices {
 	@Transactional(readOnly = true)
 	@Override
 	public List<CustomerDTO> findAll(String filter) {
-		List<Customer >customerList = new ArrayList<>();
+		List<Customer> customerList = new ArrayList<>();
 		if(StringUtils.isBlank(filter)) {
 			customerList = customerRepository.findAll();	
 		}else {
@@ -96,8 +101,17 @@ public class CustomerServicesImpl implements CustomerServices {
 			customerRepository.deleteAll(Arrays.asList(customer.get()));	
 		}catch (DataIntegrityViolationException | JpaSystemException e) {
 			log.info("Error transaction", e);
-			throw new RuntimeException(e);
+			throw new RunTimeExceptionCustomService(e);
 		}
+	}
+	
+	@Override
+	public List<CustomerDTO> getFromServiceExternal(int serviceId) throws ExceptionCustomService, JsonProcessingException {
+		List<CustomerDTO>  listCustomerDTO = customerClientRequestService.getCustomersFromService(serviceId);
+		if(listCustomerDTO.isEmpty()) {
+				throw new ExceptionCustomService(ExceptionCustomService.CUSTOMER_NOT_FOUND_STRING);
+		}
+		return listCustomerDTO;
 	}
 
 }

@@ -7,22 +7,22 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper=false)
-public class RunTimeExceptionCustomService extends RuntimeException {
+public class ExceptionRequestClientService extends RuntimeException {
 	
 	private static final long serialVersionUID = -5944006828038286308L;
 	
 	private String message;
 	private int code;
 	
-	public RunTimeExceptionCustomService(String msg) {
+	public ExceptionRequestClientService(String msg) {
 		super(msg);
 	}
 	
-	public RunTimeExceptionCustomService(Throwable e) {
+	public ExceptionRequestClientService(Throwable e) {
 		super(e);
 	}
 	
-	public RunTimeExceptionCustomService(Throwable e,int code) {
+	public ExceptionRequestClientService(Throwable e,int code) {
 		super();
 		this.code = code;
 	}
