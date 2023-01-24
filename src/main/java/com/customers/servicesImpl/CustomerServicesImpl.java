@@ -109,7 +109,7 @@ public class CustomerServicesImpl implements CustomerServices {
 	public List<CustomerDTO> getFromServiceExternal(int serviceId) throws ExceptionCustomService, JsonProcessingException {
 		List<CustomerDTO>  listCustomerDTO = customerClientRequestService.getCustomersFromService(serviceId);
 		if(listCustomerDTO.isEmpty()) {
-				throw new ExceptionCustomService(ExceptionCustomService.CUSTOMER_NOT_FOUND_STRING);
+				throw new ExceptionCustomService(ExceptionCustomService.NOT_DATA_TO_DISPLAY_STRING);
 		}
 		return listCustomerDTO;
 	}

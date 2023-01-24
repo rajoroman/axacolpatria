@@ -6,7 +6,9 @@ import java.util.Collections;
 import java.util.List;
 
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Service;
@@ -48,16 +50,18 @@ public class CustomerClientRequestImpl implements CustomerClientRequestService {
 		try {
 			List<CustomerDTO> listCustomerDTO = new ArrayList<>();
 			List<CustomerRequestDTO> listCustomerRequestDTO = Arrays.asList(this.restTemplate.getForObject(url, CustomerRequestDTO[].class));
-			listCustomerRequestDTO.forEach(crDTO -> {
-				CustomerDTO customerDTO = new CustomerDTO();
-				customerDTO.setAddress(crDTO.getAddress());
-				customerDTO.setAge(crDTO.getAge());
-				customerDTO.setCustomerId("0");
-				customerDTO.setId(0L);
-				customerDTO.setName(crDTO.getName());
-				customerDTO.setPhoneNumber(crDTO.getPhoneNumber());
-				listCustomerDTO.add(customerDTO);
-			});
+			if(!listCustomerRequestDTO.isEmpty()) {
+				listCustomerRequestDTO.forEach(crDTO -> {
+					CustomerDTO customerDTO = new CustomerDTO();
+					customerDTO.setAddress(crDTO.getAddress());
+					customerDTO.setAge(crDTO.getAge());
+					customerDTO.setCustomerId("0");
+					customerDTO.setId(0L);
+					customerDTO.setName(crDTO.getName());
+					customerDTO.setPhoneNumber(crDTO.getPhoneNumber());
+					listCustomerDTO.add(customerDTO);
+				});
+			}
 			return listCustomerDTO;
 		}catch(HttpClientErrorException e) {
 			log.info(e.toString());

@@ -151,7 +151,6 @@ public class ErrorHandler {
 		}else if (ex.getCause() instanceof HttpMessageNotReadableException) {
 			error_message = ERROR_FORMAT_JSON;
 		} 
-		 
         
 		FilterDTO filterDTO = new FilterDTO("");
 		ModelAndView modelAndView = new ModelAndView();
@@ -159,6 +158,20 @@ public class ErrorHandler {
 		modelAndView.addObject("filter", filterDTO);
 		modelAndView.addObject("hasError",1);
 	    modelAndView.addObject("messageList", error_message);
+		modelAndView.setViewName("list");
+		return modelAndView;
+    }
+	
+	@ExceptionHandler(ExceptionCustomService.class)
+    public ModelAndView handleErrorsRequestClient(ExceptionCustomService ex) {
+		List<CustomerDTO> customerList = new ArrayList<>();
+		
+		FilterDTO filterDTO = new FilterDTO("");
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.addObject("customersList", customerList);
+		modelAndView.addObject("filter", filterDTO);
+		modelAndView.addObject("hasError",1);
+	    modelAndView.addObject("messageList", ex.getMessage());
 		modelAndView.setViewName("list");
 		return modelAndView;
     }

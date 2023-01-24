@@ -16,12 +16,14 @@ public class ExceptionCustomService extends Exception {
 	public static final int ACCOUNT_TYPE_NOT_FOUND = 3;
 	public static final int INSUFFICIENT_BALANCE = 4;
 	public static final String CUSTOMER_NOT_FOUND_STRING = "Customer not found";
+	public static final String NOT_DATA_TO_DISPLAY_STRING = "No data to display";
 	
 	private String message;
 	private int code;
 	
 	public ExceptionCustomService(String msg) {
 		super(msg);
+		this.message = msg;
 	}
 	
 	public ExceptionCustomService(Throwable e) {
